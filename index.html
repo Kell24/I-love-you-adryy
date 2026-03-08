@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>I Love You Adry</title>
+    <style>
+        body { margin: 0; overflow: hidden; background-color: black; display: flex; justify-content: center; align-items: center; height: 100vh; }
+        canvas { display: block; }
+    </style>
+</head>
+<body>
+    <canvas id="heartCanvas"></canvas>
+    <script>
+        const canvas = document.getElementById('heartCanvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const words = "I LOVE YOU ADRY";
+        const particles = [];
+        const particleCount = 100; // Quantidade ideal para não embolar
+
+        class Particle {
+            constructor(angle) {
+                this.angle = angle;
+                this.speed = 0.005; // Velocidade bem lenta
+                this.size = 18; // FONTE MAIOR E FIXA PARA MELHOR LEITURA
+            }
+            update() { this.angle += this.speed; }
+            draw() {
+                // Equação do coração
+                const x = 16 * Math.pow(Math.sin(this.angle), 3);
+                const y = -(13 * Math.cos(this.angle) - 5 * Math.cos(2 * this.angle) - 2 * Math.cos(3 * this.angle) - Math.cos(4 * this.angle));
+                
+                const scale = 15; // Tamanho do desenho
+                const centerX = canvas.width / 2;
+                const centerY = canvas.height / 2;
+
+                ctx.fillStyle = "#FF1493"; // Rosa Neon bem visível
+                ctx.font = `bold ${this.size}px Arial`; // Fonte em negrito
+                
+                const posX = centerX + x * scale;
+                const posY = centerY + y * scale;
+
+                ctx.fillText(words, posX, posY);
+            }
+        }
+
+        function init() { 
+            for (let i = 0; i < particleCount; i++) { 
+                // Distribui os nomes de forma uniforme ao redor do coração
+                particles.push(new Particle(i * (Math.PI * 2 / particleCount))); 
+            } 
+        }
+
+        function animate() {
+            // Fundo mais sólido (0.3) para as letras não ficarem transparentes demais
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.3)'; 
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            particles.forEach(p => { 
+                p.update(); 
+                p.draw(); 
+            });
+            requestAnimationFrame(animate);
+        }
+
+        init();
+        animate();
+
+        window.addEventListener('resize', () => { 
+            canvas.width = window.innerWidth; 
+            canvas.height = window.innerHeight; 
+        });
+    </script>
+</body>
+</html>
